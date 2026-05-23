@@ -23,7 +23,7 @@ pip install -e .
 
 ## Use it
 
-### Python
+### Simple Python Run which prints the code.
 
 ```python
 from modelit import perceptron
@@ -31,7 +31,7 @@ from modelit import perceptron
 perceptron()
 ```
 
-### Save to file
+### Save to file And then Run so the file is created with code in it.
 
 ```python
 from modelit import perceptron
