@@ -36,4 +36,4 @@ where = ["."]
 include = ["modelit*"]
 
 [tool.setuptools.package-data]
-modelit = ["templates/*/*.py", "templates/*/*.json"]
+modelit = ["templates/*/*.py"]

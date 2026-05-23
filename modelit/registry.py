@@ -5,20 +5,16 @@ from __future__ import annotations
 from dataclasses import dataclass
 from importlib.resources import files
 from pathlib import Path
-import json
-import sys
 
 
 PACKAGE_NAME = "modelit"
 TEMPLATES_DIR = "templates"
 TEMPLATE_FILENAME = "template.py"
-METADATA_FILENAME = "metadata.json"
 
 
 @dataclass(frozen=True)
 class TemplateInfo:
     name: str
-    output_file: str
 
 
 def _templates_root():
@@ -42,17 +38,7 @@ def available_models() -> tuple[str, ...]:
 
 
 def load_metadata(name: str) -> TemplateInfo:
-    metadata_path = _template_dir(name).joinpath(METADATA_FILENAME)
-    data: dict[str, str] = {}
-    if metadata_path.is_file():
-        data = json.loads(metadata_path.read_text(encoding="utf-8"))
-
-    output_file = data.get("output_file") or f"{name}.py"
-
-    return TemplateInfo(
-        name=name,
-        output_file=output_file,
-    )
+    return TemplateInfo(name=name)
 
 
 def load_source(name: str) -> str:
@@ -63,9 +49,9 @@ def load_source(name: str) -> str:
 
 
 def build_template_callable(name: str):
-    info = load_metadata(name)
     source = load_source(name)
-    output_file = info.output_file
+    info = load_metadata(name)
+    output_file = f"{name}.py"
 
     def runner(output: str | None = None) -> None:
         if output:

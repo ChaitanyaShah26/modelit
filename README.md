@@ -64,16 +64,9 @@ Create:
 
 ```text
 modelit/templates/<name>/template.py
-modelit/templates/<name>/metadata.json
 ```
 
-Minimal metadata:
-
-```json
-{"name": "<name>"}
-```
-
-The template file name becomes the callable name.
+That's it. The folder name becomes the callable name.
 
 Then the new name is exposed automatically as:
 
