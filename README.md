@@ -67,6 +67,14 @@ modelit/templates/<name>/template.py
 modelit/templates/<name>/metadata.json
 ```
 
+Minimal metadata:
+
+```json
+{"name": "<name>"}
+```
+
+The template file name becomes the callable name.
+
 Then the new name is exposed automatically as:
 
 ```python

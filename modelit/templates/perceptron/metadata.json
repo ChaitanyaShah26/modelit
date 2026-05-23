@@ -1,6 +1,3 @@
 {
-  "name": "perceptron",
-  "title": "Perceptron Learning Algorithm",
-  "output_file": "perceptron.py",
-  "description": "Print the full perceptron learning algorithm example."
+  "name": "perceptron"
 }

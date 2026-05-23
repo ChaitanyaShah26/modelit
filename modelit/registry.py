@@ -18,9 +18,7 @@ METADATA_FILENAME = "metadata.json"
 @dataclass(frozen=True)
 class TemplateInfo:
     name: str
-    title: str
     output_file: str
-    description: str
 
 
 def _templates_root():
@@ -49,15 +47,11 @@ def load_metadata(name: str) -> TemplateInfo:
     if metadata_path.is_file():
         data = json.loads(metadata_path.read_text(encoding="utf-8"))
 
-    title = data.get("title") or name.replace("_", " ").title()
     output_file = data.get("output_file") or f"{name}.py"
-    description = data.get("description") or f"Print the {title} template."
 
     return TemplateInfo(
         name=name,
-        title=title,
         output_file=output_file,
-        description=description,
     )
 
 
@@ -71,6 +65,7 @@ def load_source(name: str) -> str:
 def build_template_callable(name: str):
     info = load_metadata(name)
     source = load_source(name)
+    output_file = info.output_file
 
     def runner(output: str | None = None) -> None:
         if output:
@@ -82,13 +77,12 @@ def build_template_callable(name: str):
             print(f"Generated {path}")
             return None
 
-        for chunk in source.splitlines(keepends=True):
-            sys.stdout.write(chunk)
+        print(source, end="")
 
     runner.__name__ = name
     runner.__qualname__ = name
     runner.__module__ = "modelit"
-    runner.__doc__ = info.description
-    runner.output_file = info.output_file  # type: ignore[attr-defined]
+    runner.__doc__ = f"Print or save the {name} template."
+    runner.output_file = output_file  # type: ignore[attr-defined]
     runner.template_info = info  # type: ignore[attr-defined]
     return runner
