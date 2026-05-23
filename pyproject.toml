@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "modelit"
+version = "0.1.0"
+description = "Local-first ML starter templates you can print or save"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "Yashsmith" }]
+keywords = ["ml", "deep-learning", "templates", "boilerplate", "pytorch", "scikit-learn"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Education",
+  "Intended Audience :: Developers",
+]
+license-files = ["LICENSE"]
+
+[project.urls]
+Homepage = "https://github.com/Yashsmith/modelit"
+Source = "https://github.com/Yashsmith/modelit"
+Issues = "https://github.com/Yashsmith/modelit/issues"
+
+[project.scripts]
+modelit = "modelit.cli:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["modelit*"]
+
+[tool.setuptools.package-data]
+modelit = ["templates/*/*.py", "templates/*/*.json"]
