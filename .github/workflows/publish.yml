@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python -m pip install --upgrade pip build
+      - run: python -m pip install --upgrade pip build setuptools-scm
       - run: python -m build
       - uses: actions/upload-artifact@v4
         with:

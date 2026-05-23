@@ -85,7 +85,11 @@ modelit create mycode --output mycode.py
 
 ## Publish flow
 
-1. Add new templates.
-2. Update version.
-3. Push a tag like `v0.1.0`.
-4. GitHub Actions publishes to PyPI.
+1. Add a new template folder.
+2. `git add .`
+3. `git commit -m "..."`
+4. `git push`
+5. `git tag v0.x.y`
+6. `git push origin v0.x.y`
+
+The version is taken from the git tag, so you do not edit `pyproject.toml` for releases.
