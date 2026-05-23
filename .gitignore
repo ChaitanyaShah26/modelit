@@ -7,8 +7,9 @@ dist/
 .mypy_cache/
 .ruff_cache/
 .venv/
-.venv2/
+
 venv/
 .DS_Store
 code1.py
 screenshots/
+

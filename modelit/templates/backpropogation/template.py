@@ -13,6 +13,7 @@
 import numpy as np
 import pandas as pd
 
+from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
@@ -386,28 +387,11 @@ print(w2_xavier)
 # =========================================================
 
 print("\n=================================================")
-print("Titanic Dataset using MLPClassifier")
+print("Breast Cancer Dataset using MLPClassifier")
 print("=================================================")
 
-# Dataset loading
-# Install:
-# pip install kagglehub
-
-import kagglehub
-
-path = kagglehub.dataset_download(
-    "yasserh/titanic-dataset"
-)
-
-print("\nPath to dataset files:")
-print(path)
-
-
-# =========================================================
-# LOAD DATASET
-# =========================================================
-
-df = pd.read_csv(f"{path}/Titanic-Dataset.csv")
+dataset = load_breast_cancer(as_frame=True)
+df = dataset.frame
 
 print("\nDataset Head:")
 print(df.head())
@@ -417,48 +401,8 @@ print(df.head())
 # FEATURES AND LABELS
 # =========================================================
 
-y_titanic = df["Survived"]
-
-X_titanic = df.drop(
-    columns=[
-        "Survived",
-        "Name",
-        "Ticket",
-        "Cabin"
-    ]
-)
-
-
-# =========================================================
-# ENCODE SEX COLUMN
-# =========================================================
-
-X_titanic["Sex"] = X_titanic["Sex"].map(
-    {
-        "male": 0,
-        "female": 1
-    }
-)
-
-
-# =========================================================
-# ONE HOT ENCODING
-# =========================================================
-
-X_titanic = pd.get_dummies(
-    X_titanic,
-    columns=["Embarked"],
-    drop_first=True
-)
-
-
-# =========================================================
-# HANDLE MISSING VALUES
-# =========================================================
-
-X_titanic = X_titanic.fillna(
-    X_titanic.mean()
-)
+X_cancer = df.drop(columns=["target"])
+y_cancer = df["target"]
 
 
 # =========================================================
@@ -466,8 +410,7 @@ X_titanic = X_titanic.fillna(
 # =========================================================
 
 scaler = StandardScaler()
-
-X_scaled = scaler.fit_transform(X_titanic)
+X_scaled = scaler.fit_transform(X_cancer)
 
 
 # =========================================================
@@ -476,7 +419,7 @@ X_scaled = scaler.fit_transform(X_titanic)
 
 X_train, X_test, y_train, y_test = train_test_split(
     X_scaled,
-    y_titanic,
+    y_cancer,
     test_size=0.2,
     random_state=42
 )
