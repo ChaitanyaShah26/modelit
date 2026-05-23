@@ -1,6 +1,13 @@
 # ModelIt
 
-Tiny local-first ML template printer.
+ModelIt is a tiny Python package for storing your ML/DL boilerplate templates.
+
+## What it does
+
+- `from modelit import perceptron`
+- `perceptron()` prints the full code
+- `perceptron(output="code1.py")` saves it to a file
+- `modelit create perceptron` works from the terminal
 
 ## Install
 
@@ -8,13 +15,15 @@ Tiny local-first ML template printer.
 pip install modelit
 ```
 
-For development from a clone, use:
+For local development:
 
 ```bash
 pip install -e .
 ```
 
-## Run
+## Use it
+
+### Python
 
 ```python
 from modelit import perceptron
@@ -22,24 +31,12 @@ from modelit import perceptron
 perceptron()
 ```
 
-Or from CLI:
-
-```bash
-modelit create perceptron
-```
-
-## Save to file
+### Save to file
 
 ```python
 from modelit import perceptron
 
 perceptron(output="code1.py")
-```
-
-Or:
-
-```bash
-modelit create perceptron --output code1.py
 ```
 
 Then run:
@@ -48,28 +45,47 @@ Then run:
 python3 code1.py
 ```
 
-## Publish
+### CLI
 
-This project is set up for PyPI publishing with GitHub Actions.
-
-1. Push a tag like `v0.1.0`
-2. GitHub Actions builds and publishes to PyPI
-3. Users install with `pip install modelit`
-
-To update later, change the version, add your new templates, and publish a new tag.
+```bash
+modelit create perceptron
+modelit create perceptron --output code1.py
+```
 
 ## Add a new code
 
-Create:
+1. Create a folder:
 
 ```text
-modelit/templates/<name>/template.py
+modelit/templates/mycode/
 ```
 
-That's it. The folder name becomes the callable name.
+2. Add your code file:
 
-Then the new name is exposed automatically as:
+```text
+modelit/templates/mycode/template.py
+```
+
+3. Done. The folder name becomes the function name.
+
+That means this will work automatically:
 
 ```python
-from modelit import <name>
+from modelit import mycode
+
+mycode()
 ```
+
+And this too:
+
+```bash
+modelit create mycode
+modelit create mycode --output mycode.py
+```
+
+## Publish flow
+
+1. Add new templates.
+2. Update version.
+3. Push a tag like `v0.1.0`.
+4. GitHub Actions publishes to PyPI.
