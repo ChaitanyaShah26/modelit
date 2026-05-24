@@ -66,6 +66,12 @@ modelit/templates/mycode/
 modelit/templates/mycode/template.py
 ```
 
+For Java, use:
+
+```text
+modelit/templates/mycode/template.java
+```
+
 3. Done. The folder name becomes the function name.
 
 That means this will work automatically:
