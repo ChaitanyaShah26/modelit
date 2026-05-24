@@ -6,36 +6,18 @@ from dataclasses import dataclass
 from importlib.resources import files
 from pathlib import Path
 
-
 PACKAGE_NAME = "modelit"
 TEMPLATES_DIR = "templates"
-
 
 @dataclass(frozen=True)
 class TemplateInfo:
     name: str
 
-
 def _templates_root():
     return files(PACKAGE_NAME).joinpath(TEMPLATES_DIR)
 
-
 def _template_dir(name: str):
     return _templates_root().joinpath(name)
-
-
-def _get_template_file(name_or_dir):
-    target_dir = _template_dir(name_or_dir) if isinstance(name_or_dir, str) else name_or_dir
-    
-    if not target_dir.is_dir():
-        return None
-        
-    for child in target_dir.iterdir():
-        if child.is_file() and child.name.startswith("template."):
-            return child
-            
-    return None
-
 
 def available_models() -> tuple[str, ...]:
     root = _templates_root()
@@ -44,51 +26,63 @@ def available_models() -> tuple[str, ...]:
 
     names: list[str] = []
     for child in root.iterdir():
-        if child.is_dir() and _get_template_file(child) is not None:
-            names.append(child.name)
+        if child.is_dir() and not child.name.startswith("__"):
+            if any(child.iterdir()):
+                names.append(child.name)
     return tuple(sorted(names))
-
 
 def load_metadata(name: str) -> TemplateInfo:
     return TemplateInfo(name=name)
 
-
-def load_source_and_ext(name: str) -> tuple[str, str]:
-    template_file = _get_template_file(name)
-    if template_file is None:
-        raise FileNotFoundError(f"Missing template source for {name!r}")
-    
-    ext = Path(template_file.name).suffix
-    return template_file.read_text(encoding="utf-8"), ext
-
-
-def load_source(name: str) -> str:
-    source, _ = load_source_and_ext(name)
-    return source
-
+def load_template_files(name: str) -> dict[str, str]:
+    target_dir = _template_dir(name)
+    if not target_dir.is_dir():
+        raise FileNotFoundError(f"Missing template directory for {name!r}")
+        
+    file_contents = {}
+    for child in target_dir.iterdir():
+        if child.is_file() and not child.name.startswith("__"):
+            file_contents[child.name] = child.read_text(encoding="utf-8")
+    return file_contents
 
 def build_template_callable(name: str):
-    source, ext = load_source_and_ext(name)
+    files_dict = load_template_files(name)
     info = load_metadata(name)
     
-    output_file = f"{name}{ext}"
+    is_single_file = len(files_dict) == 1
+    default_filename = list(files_dict.keys())[0] if is_single_file else name
 
     def runner(output: str | None = None) -> None:
         if output:
-            path = Path(output)
-            if path.exists():
-                raise FileExistsError(f"{path} already exists")
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(source, encoding="utf-8")
-            print(f"Generated {path}")
+            out_path = Path(output)
+            
+            if is_single_file:
+                if out_path.exists() and out_path.is_file():
+                    raise FileExistsError(f"{out_path} already exists")
+                out_path.parent.mkdir(parents=True, exist_ok=True)
+                out_path.write_text(list(files_dict.values())[0], encoding="utf-8")
+                print(f"Generated {out_path}")
+            else:
+                out_path.mkdir(parents=True, exist_ok=True)
+                for fname, content in files_dict.items():
+                    file_path = out_path / fname
+                    if file_path.exists():
+                        print(f"Skipping {file_path} (already exists)")
+                        continue
+                    file_path.write_text(content, encoding="utf-8")
+                    print(f"Generated {file_path}")
             return None
 
-        print(source, end="")
+        # If no output is specified, print to terminal
+        for fname, content in files_dict.items():
+            if not is_single_file:
+                print(f"\n{'='*40}\nFile: {fname}\n{'='*40}")
+            print(content, end="\n\n" if not is_single_file else "")
 
     runner.__name__ = name
     runner.__qualname__ = name
     runner.__module__ = "modelit"
     runner.__doc__ = f"Print or save the {name} template."
-    runner.output_file = output_file  # type: ignore[attr-defined]
+    runner.output_file = default_filename  # type: ignore[attr-defined]
     runner.template_info = info  # type: ignore[attr-defined]
     return runner
