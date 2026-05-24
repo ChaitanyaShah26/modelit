@@ -9,7 +9,6 @@ from pathlib import Path
 
 PACKAGE_NAME = "modelit"
 TEMPLATES_DIR = "templates"
-TEMPLATE_FILENAME = "template.py"
 
 
 @dataclass(frozen=True)
@@ -25,6 +24,19 @@ def _template_dir(name: str):
     return _templates_root().joinpath(name)
 
 
+def _get_template_file(name_or_dir):
+    target_dir = _template_dir(name_or_dir) if isinstance(name_or_dir, str) else name_or_dir
+    
+    if not target_dir.is_dir():
+        return None
+        
+    for child in target_dir.iterdir():
+        if child.is_file() and child.name.startswith("template."):
+            return child
+            
+    return None
+
+
 def available_models() -> tuple[str, ...]:
     root = _templates_root()
     if not root.is_dir():
@@ -32,7 +44,7 @@ def available_models() -> tuple[str, ...]:
 
     names: list[str] = []
     for child in root.iterdir():
-        if child.is_dir() and child.joinpath(TEMPLATE_FILENAME).is_file():
+        if child.is_dir() and _get_template_file(child) is not None:
             names.append(child.name)
     return tuple(sorted(names))
 
@@ -41,17 +53,25 @@ def load_metadata(name: str) -> TemplateInfo:
     return TemplateInfo(name=name)
 
 
-def load_source(name: str) -> str:
-    source_path = _template_dir(name).joinpath(TEMPLATE_FILENAME)
-    if not source_path.is_file():
+def load_source_and_ext(name: str) -> tuple[str, str]:
+    template_file = _get_template_file(name)
+    if template_file is None:
         raise FileNotFoundError(f"Missing template source for {name!r}")
-    return source_path.read_text(encoding="utf-8")
+    
+    ext = Path(template_file.name).suffix
+    return template_file.read_text(encoding="utf-8"), ext
+
+
+def load_source(name: str) -> str:
+    source, _ = load_source_and_ext(name)
+    return source
 
 
 def build_template_callable(name: str):
-    source = load_source(name)
+    source, ext = load_source_and_ext(name)
     info = load_metadata(name)
-    output_file = f"{name}.py"
+    
+    output_file = f"{name}{ext}"
 
     def runner(output: str | None = None) -> None:
         if output:
