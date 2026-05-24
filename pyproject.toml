@@ -36,7 +36,7 @@ where = ["."]
 include = ["modelit*"]
 
 [tool.setuptools.package-data]
-modelit = ["templates/*/*.py"]
+modelit = ["templates/*/*.py", "templates/*/*.java"]
 
 [tool.setuptools_scm]
 version_scheme = "guess-next-dev"
