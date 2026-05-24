@@ -17,6 +17,8 @@ modelit/templates/<name>/
 modelit/templates/<name>/template.py
 ```
 
+For multi-file templates, add more files in the same folder.
+
 4. Make sure the folder name is the function name.
 5. Test it locally:
 
@@ -39,6 +41,7 @@ modelit create <name>
 - Do not add `metadata.json`.
 - Keep file names lowercase.
 - Prefer clean, beginner-friendly code.
+- If a template has multiple files, `--output` should be treated as a directory.
 
 ## Pull request flow
 

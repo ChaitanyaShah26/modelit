@@ -8,6 +8,8 @@ ModelIt is a tiny Python package for storing your ML/DL boilerplate templates.
 - `perceptron()` prints the full code
 - `perceptron(output="code1.py")` saves it to a file
 - `modelit create perceptron` works from the terminal
+- single-file templates write to a file
+- multi-file templates write to a folder
 
 ## Install
 
@@ -74,6 +76,8 @@ modelit/templates/mycode/template.java
 
 3. Done. The folder name becomes the function name.
 
+If a template has more than one file, `--output` must be a directory path.
+
 That means this will work automatically:
 
 ```python
@@ -87,6 +91,12 @@ And this too:
 ```bash
 modelit create mycode
 modelit create mycode --output mycode.py
+```
+
+For multi-file templates:
+
+```bash
+modelit create solid_notification --output out/solid_notification
 ```
 
 ## Publish flow

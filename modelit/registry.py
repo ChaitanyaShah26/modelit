@@ -48,21 +48,25 @@ def load_template_files(name: str) -> dict[str, str]:
 def build_template_callable(name: str):
     files_dict = load_template_files(name)
     info = load_metadata(name)
-    
+
     is_single_file = len(files_dict) == 1
     default_filename = list(files_dict.keys())[0] if is_single_file else name
 
     def runner(output: str | None = None) -> None:
         if output:
             out_path = Path(output)
-            
+
             if is_single_file:
-                if out_path.exists() and out_path.is_file():
-                    raise FileExistsError(f"{out_path} already exists")
+                if out_path.exists():
+                    raise FileExistsError(f"Output path already exists: {out_path}")
                 out_path.parent.mkdir(parents=True, exist_ok=True)
                 out_path.write_text(list(files_dict.values())[0], encoding="utf-8")
                 print(f"Generated {out_path}")
             else:
+                if out_path.suffix:
+                    raise ValueError("Multi-file templates require a directory output path")
+                if out_path.exists() and not out_path.is_dir():
+                    raise FileExistsError(f"Output path already exists and is not a directory: {out_path}")
                 out_path.mkdir(parents=True, exist_ok=True)
                 for fname, content in files_dict.items():
                     file_path = out_path / fname
