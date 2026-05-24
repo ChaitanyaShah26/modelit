@@ -34,6 +34,12 @@ or:
 modelit create <name>
 ```
 
+You can list all available templates with:
+
+```bash
+modelit list
+```
+
 ## Rules
 
 - Keep templates simple and runnable.

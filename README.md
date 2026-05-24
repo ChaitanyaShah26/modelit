@@ -8,6 +8,7 @@ ModelIt is a tiny Python package for storing your ML/DL boilerplate templates.
 - `perceptron()` prints the full code
 - `perceptron(output="code1.py")` saves it to a file
 - `modelit create perceptron` works from the terminal
+- `modelit list` shows everything available
 - single-file templates write to a file
 - multi-file templates write to a folder
 
@@ -50,6 +51,7 @@ python3 code1.py
 ### CLI
 
 ```bash
+modelit list
 modelit create perceptron
 modelit create perceptron --output code1.py
 ```
